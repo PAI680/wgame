@@ -1,0 +1,2402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>红包抽奖游戏</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 10px;
+            font-size: 14px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(90deg, #e52d27 0%, #b31217 100%);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            padding: 15px;
+            width: 100%;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            color: #e52d27;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-title i {
+            color: #ffc107;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #f0f0f0;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            font-weight: 700;
+            color: #e52d27;
+            font-size: 0.95rem;
+        }
+
+        .lottery-times {
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 12px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 8px;
+            margin: 12px 0;
+            color: #e52d27;
+            font-weight: 700;
+        }
+
+        .lottery-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #e52d27 0%, #b31217 100%);
+            color: white;
+        }
+
+        .btn-primary:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(229, 45, 39, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(90deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+        }
+
+        .btn-secondary:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-disabled {
+            background: #cccccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .btn-disabled:active {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tasks-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .task-item {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .task-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #333;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .task-tag {
+            background: #e52d27;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+
+        .task-tag.daily {
+            background: #2196F3;
+        }
+
+        .task-description {
+            color: #666;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            font-size: 0.85rem;
+        }
+
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .task-reward {
+            color: #e52d27;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .task-complete-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            min-width: 80px;
+        }
+
+        .task-complete-btn.disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .lottery-results {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .lottery-result-item {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            flex: 1 0 45%;
+            min-width: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lottery-amount {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #e52d27;
+            margin-bottom: 3px;
+        }
+
+        .lottery-name {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .lottery-history {
+            margin-top: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 10px;
+            background: #f9f9f9;
+            margin-bottom: 6px;
+            border-radius: 6px;
+            border-left: 3px solid #4CAF50;
+            font-size: 0.85rem;
+        }
+
+        .history-time {
+            color: #666;
+            font-size: 0.75rem;
+            flex: 2;
+        }
+
+        .history-result {
+            font-weight: 600;
+            color: #e52d27;
+            flex: 1;
+            text-align: right;
+        }
+
+        .login-form {
+            max-width: 100%;
+            margin: 20px auto;
+            background: white;
+            padding: 25px 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #e52d27;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+            -webkit-appearance: none;
+        }
+
+        .form-control:focus {
+            border-color: #e52d27;
+            outline: none;
+        }
+
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .form-actions .btn {
+            width: 100%;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px 10px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            color: #e52d27;
+            margin-bottom: 15px;
+            padding-right: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-size: 0.8rem;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+
+        .time-info {
+            background: #fff8e1;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            border-left: 4px solid #ffc107;
+            font-size: 0.85rem;
+        }
+
+        .lottery-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .lottery-animation-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .result-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #e52d27;
+            margin: 15px 0;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .admin-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            padding: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .submission-item {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .submission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .submission-info {
+            color: #666;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+        }
+
+        .submission-image {
+            text-align: center;
+            margin: 12px 0;
+        }
+
+        .submission-image img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .submission-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .submission-actions button {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .approve-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .reject-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .adjust-btn {
+            background: #007bff;
+            color: white;
+        }
+
+        .user-list {
+            margin-top: 15px;
+        }
+
+        .user-item {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .user-info-admin {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 8px;
+        }
+
+        .user-controls {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .user-controls input {
+            flex: 2;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .user-controls button {
+            flex: 1;
+            padding: 6px 10px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            min-width: 60px;
+        }
+
+        .admin-login-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .admin-tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .admin-tab.active {
+            color: #e52d27;
+            border-bottom: 3px solid #e52d27;
+            font-weight: 600;
+        }
+
+        .admin-tab-content {
+            display: none;
+        }
+
+        .admin-tab-content.active {
+            display: block;
+        }
+
+        /* 手机横屏适配 */
+        @media (min-width: 576px) {
+            .container {
+                max-width: 540px;
+            }
+
+            .lottery-buttons {
+                flex-direction: row;
+            }
+
+            .lottery-buttons .btn {
+                flex: 1;
+            }
+
+            .form-actions {
+                flex-direction: row;
+            }
+
+            .submission-actions {
+                flex-direction: row;
+            }
+
+            .submission-actions button {
+                flex: 1;
+            }
+
+            .user-controls {
+                width: auto;
+            }
+
+            .user-controls input {
+                width: 80px;
+            }
+        }
+
+        /* 平板适配 */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+
+            .main-content {
+                flex-direction: row;
+            }
+
+            .panel {
+                flex: 1;
+            }
+
+            .task-footer {
+                flex-wrap: nowrap;
+            }
+
+            .task-reward {
+                margin-bottom: 0;
+            }
+
+            .user-item {
+                flex-wrap: nowrap;
+            }
+
+            .user-info-admin {
+                margin-bottom: 0;
+            }
+        }
+
+        /* 防止输入框在iOS上获得焦点时的样式 */
+        input, textarea, select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 0;
+        }
+
+        /* 优化滚动条 */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* 防止长按选中文本 */
+        .no-select {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* 优化触摸反馈 */
+        .btn, .task-complete-btn, .admin-tab, .modal-close {
+            transition: all 0.2s ease;
+        }
+
+        .btn:active, .task-complete-btn:active, .admin-tab:active {
+            opacity: 0.8;
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 登录界面 -->
+        <div id="loginSection" class="login-form">
+            <h2><i class="fas fa-gift"></i> 红包抽奖游戏</h2>
+            <div id="loginAlert" class="alert"></div>
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" class="form-control" placeholder="请输入您的姓名">
+            </div>
+            <div class="form-actions">
+                <button id="loginBtn" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> 登录</button>
+                <button id="registerBtn" class="btn btn-secondary"><i class="fas fa-user-plus"></i> 注册</button>
+            </div>
+            <div class="time-info">
+                <p><i class="fas fa-clock"></i> 抽奖时间：2026年2月16日19:00 - 2月17日00:00</p>
+                <p>数据保存在浏览器本地，清空浏览器数据会丢失进度</p>
+            </div>
+        </div>
+
+        <!-- 主界面 -->
+        <div id="mainSection" style="display: none;">
+            <!-- 头部 -->
+            <div class="header">
+                <h1><i class="fas fa-gift"></i> 红包抽奖游戏</h1>
+                <p>完成任务获得抽奖机会，赢取丰厚红包奖励！</p>
+            </div>
+
+            <!-- 时间信息 -->
+            <div id="timeInfo" class="time-info">
+                <p><i class="fas fa-clock"></i> 抽奖时间：2026年2月16日19:00 - 2月17日00:00</p>
+                <p id="lotteryTimeStatus"></p>
+            </div>
+
+            <!-- 主内容区 -->
+            <div class="main-content">
+                <!-- 左侧：用户信息和抽奖 -->
+                <div class="panel">
+                    <div class="panel-title">
+                        <i class="fas fa-user"></i> 用户信息
+                        <button id="logoutBtn" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.8rem; margin-left: auto;">退出</button>
+                    </div>
+
+                    <div class="user-info">
+                        <div class="info-item">
+                            <span class="info-label">用户名：</span>
+                            <span class="info-value" id="userName">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">已完成任务：</span>
+                            <span class="info-value" id="tasksCompleted">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">已抽奖次数：</span>
+                            <span class="info-value" id="totalLotteryDrawn">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">累计奖励：</span>
+                            <span class="info-value" id="totalReward">0</span> 元
+                        </div>
+                    </div>
+
+                    <div class="lottery-times">
+                        <div>剩余抽奖次数</div>
+                        <div id="lotteryTimes" style="font-size: 2.5rem;">0</div>
+                    </div>
+
+                    <div class="lottery-buttons">
+                        <button id="singleDrawBtn" class="btn btn-primary">
+                            <i class="fas fa-redo"></i> 单次抽奖
+                        </button>
+                        <button id="fiveDrawBtn" class="btn btn-secondary">
+                            <i class="fas fa-bolt"></i> 五连抽
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 右侧：任务列表 -->
+                <div class="panel">
+                    <div class="panel-title">
+                        <i class="fas fa-tasks"></i> 任务列表
+                    </div>
+
+                    <div id="tasksContainer" class="tasks-container">
+                        <!-- 任务将通过JavaScript动态加载 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 抽奖结果 -->
+            <div class="panel" id="lotteryResultsSection" style="display: none;">
+                <div class="panel-title">
+                    <i class="fas fa-gift"></i> 抽奖结果
+                </div>
+                <div id="lotteryResults" class="lottery-results">
+                    <!-- 抽奖结果将通过JavaScript动态加载 -->
+                </div>
+                <div id="lotterySummary" style="margin-top: 15px; text-align: center; font-size: 1.1rem; font-weight: 700; color: #e52d27;"></div>
+            </div>
+
+            <!-- 抽奖历史 -->
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fas fa-history"></i> 抽奖历史记录
+                </div>
+                <div id="lotteryHistory" class="lottery-history">
+                    <!-- 历史记录将通过JavaScript动态加载 -->
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>红包抽奖游戏 &copy; 2026 | 完成任务获得抽奖机会，祝您好运！</p>
+                <p style="font-size: 0.7rem; color: #999;">数据保存在浏览器本地存储中</p>
+            </div>
+        </div>
+
+        <!-- 抽奖动画 -->
+        <div id="lotteryAnimation" class="lottery-animation">
+            <div class="lottery-animation-content">
+                <h2 style="color: #e52d27;">抽奖中...</h2>
+                <div id="animationResult" class="result-display"></div>
+                <div id="animationMessage"></div>
+                <button id="closeAnimationBtn" class="btn btn-primary" style="margin-top: 15px;">确定</button>
+            </div>
+        </div>
+
+        <!-- 任务完成确认模态框 -->
+        <div id="taskCompleteModal" class="modal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeTaskModal">&times;</button>
+                <div class="modal-title">
+                    <i class="fas fa-check-circle"></i> 完成任务
+                </div>
+                <div id="taskCompleteContent">
+                    <!-- 任务完成内容将通过JavaScript动态加载 -->
+                </div>
+                <div style="margin-top: 15px; text-align: center;">
+                    <button id="confirmTaskCompleteBtn" class="btn btn-primary">确认完成</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 管理员面板 -->
+        <div id="adminPanel" class="admin-panel">
+            <div class="panel-title">
+                <i class="fas fa-user-shield"></i> 管理员面板
+                <button id="logoutAdminBtn" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.8rem; margin-left: auto;">退出管理</button>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="submissions">任务提交审核</button>
+                <button class="admin-tab" data-tab="users">用户管理</button>
+                <button class="admin-tab" data-tab="logs">操作日志</button>
+            </div>
+
+            <!-- 任务提交审核标签页 -->
+            <div id="submissionsTab" class="admin-tab-content active">
+                <h3 style="margin-bottom: 12px; color: #e52d27; font-size: 1.1rem;">待审核的任务提交</h3>
+                <div id="pendingSubmissions">
+                    <!-- 待审核的提交将通过JavaScript动态加载 -->
+                </div>
+            </div>
+
+            <!-- 用户管理标签页 -->
+            <div id="usersTab" class="admin-tab-content">
+                <h3 style="margin-bottom: 12px; color: #e52d27; font-size: 1.1rem;">用户管理</h3>
+                <div class="form-group">
+                    <input type="text" id="searchUser" placeholder="搜索用户名..." class="form-control">
+                </div>
+                <div id="userList" class="user-list">
+                    <!-- 用户列表将通过JavaScript动态加载 -->
+                </div>
+            </div>
+
+            <!-- 操作日志标签页 -->
+            <div id="logsTab" class="admin-tab-content">
+                <h3 style="margin-bottom: 12px; color: #e52d27; font-size: 1.1rem;">操作日志</h3>
+                <div id="adminLogs">
+                    <!-- 操作日志将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 管理员登录按钮 -->
+        <button id="adminLoginBtn" class="admin-login-btn">
+            <i class="fas fa-lock"></i> 管理员
+        </button>
+
+        <!-- 管理员登录模态框 -->
+        <div id="adminLoginModal" class="modal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeAdminLoginModal">&times;</button>
+                <div class="modal-title">
+                    <i class="fas fa-lock"></i> 管理员登录
+                </div>
+                <div style="margin: 15px 0;">
+                    <input type="password" id="adminPassword" class="form-control" placeholder="请输入管理员密码">
+                </div>
+                <div style="text-align: center;">
+                    <button id="adminLoginConfirmBtn" class="btn btn-primary">登录</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 调整抽奖次数模态框 -->
+        <div id="adjustTimesModal" class="modal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeAdjustModal">&times;</button>
+                <div class="modal-title">
+                    <i class="fas fa-edit"></i> 调整抽奖次数
+                </div>
+                <div id="adjustContent">
+                    <!-- 调整内容将通过JavaScript动态加载 -->
+                </div>
+                <div style="margin-top: 15px; text-align: center;">
+                    <button id="confirmAdjustBtn" class="btn btn-primary">确认调整</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 抽奖奖品配置
+        const LOTTERY_ITEMS = [
+            { name: "5元", amount: 5, probability: 24.50 },
+            { name: "10元", amount: 10, probability: 21.00 },
+            { name: "20元", amount: 20, probability: 17.50 },
+            { name: "30元", amount: 30, probability: 14.00 },
+            { name: "50元", amount: 50, probability: 10.50 },
+            { name: "60元", amount: 60, probability: 7.00 },
+            { name: "100元", amount: 100, probability: 3.50 },
+            { name: "很遗憾，没有奖励！", amount: 0, probability: 2.00 }
+        ];
+
+        // 任务配置
+        const TASKS = [
+            {
+                id: 1,
+                name: "每日打卡",
+                description: "每天都可以打卡1次，打卡1次就领取1次抽奖",
+                reward_times: 1,
+                is_daily: true,
+                max_daily_times: 15,
+                required_image: false
+            },
+            {
+                id: 2,
+                name: "按时起床上学",
+                description: "每天按时起床上学，没有被家长催促",
+                reward_times: 1,
+                is_daily: true,
+                max_daily_times: 15,
+                required_image: true,
+                image_description: "上传起床穿衣/吃早饭的水印图片"
+            },
+            {
+                id: 3,
+                name: "认真按时完成作业",
+                description: "每天认真按时完成作业，没有被家长催促",
+                reward_times: 1,
+                is_daily: true,
+                max_daily_times: 15,
+                required_image: true,
+                image_description: "上传家长签名水印图片"
+            },
+            {
+                id: 4,
+                name: "帮助家人完成任务",
+                description: "帮助家人完成一次任务",
+                reward_times: 1,
+                is_daily: false,
+                required_fields: ["帮助对象", "帮助内容"]
+            },
+            {
+                id: 5,
+                name: "单科成绩超90分",
+                description: "月考/期末考，其中1门单科成绩超90",
+                reward_times: 1,
+                is_daily: false,
+                required_image: true,
+                image_description: "上传单科图片"
+            },
+            {
+                id: 6,
+                name: "两门单科成绩超90分",
+                description: "月考/期末考，其中2门单科成绩超90",
+                reward_times: 2,
+                is_daily: false,
+                required_image: true,
+                image_description: "上传单科图片"
+            },
+            {
+                id: 7,
+                name: "三门单科成绩超90分",
+                description: "月考/期末考，其中3门单科成绩超90",
+                reward_times: 3,
+                is_daily: false,
+                required_image: true,
+                image_description: "上传单科图片"
+            },
+            {
+                id: 8,
+                name: "总成绩排名30以上",
+                description: "月考/期末考，总成绩排30以上",
+                reward_times: 1,
+                is_daily: false,
+                required_image: true,
+                image_description: "上传总成绩图片"
+            },
+            {
+                id: 9,
+                name: "总成绩排名20以上",
+                description: "月考/期末考，总成绩排20以上",
+                reward_times: 3,
+                is_daily: false,
+                required_image: true,
+                image_description: "上传总成绩图片"
+            },
+            {
+                id: 10,
+                name: "春节前完成所有寒假作业",
+                description: "春节前完成所有寒假作业",
+                reward_times: 4,
+                is_daily: false,
+                required_image: true,
+                image_description: "上传寒假作业图片"
+            },
+            {
+                id: 11,
+                name: "获得学校奖状",
+                description: "获得学校的奖状",
+                reward_times: 1,
+                is_daily: false,
+                required_image: true,
+                image_description: "上传奖状图片"
+            }
+        ];
+
+        // 抽奖时间设置
+        const LOTTERY_START_TIME = new Date('2026-02-16T19:00:00');
+        const LOTTERY_END_TIME = new Date('2026-02-17T00:00:00');
+
+        // 管理员密码（在实际使用中应该更复杂）
+        const ADMIN_PASSWORD = "admin123";
+
+        // 数据存储键名
+        const STORAGE_KEYS = {
+            USERS: 'lottery_game_users',
+            CURRENT_USER: 'lottery_game_current_user',
+            SUBMISSIONS: 'lottery_game_submissions',
+            ADMIN_LOGS: 'lottery_game_admin_logs',
+            IS_ADMIN: 'lottery_game_is_admin'
+        };
+
+        // 全局变量
+        let currentUser = null;
+        let currentTaskId = null;
+        let allUsers = {};
+        let pendingSubmissions = [];
+        let adminLogs = [];
+        let adjustUserId = null;
+        let adjustUsername = null;
+
+        // DOM元素
+        const loginSection = document.getElementById('loginSection');
+        const mainSection = document.getElementById('mainSection');
+        const adminPanel = document.getElementById('adminPanel');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const logoutAdminBtn = document.getElementById('logoutAdminBtn');
+        const usernameInput = document.getElementById('username');
+        const loginAlert = document.getElementById('loginAlert');
+        const singleDrawBtn = document.getElementById('singleDrawBtn');
+        const fiveDrawBtn = document.getElementById('fiveDrawBtn');
+        const lotteryResultsSection = document.getElementById('lotteryResultsSection');
+        const taskCompleteModal = document.getElementById('taskCompleteModal');
+        const closeTaskModal = document.getElementById('closeTaskModal');
+        const confirmTaskCompleteBtn = document.getElementById('confirmTaskCompleteBtn');
+        const lotteryAnimation = document.getElementById('lotteryAnimation');
+        const animationResult = document.getElementById('animationResult');
+        const animationMessage = document.getElementById('animationMessage');
+        const closeAnimationBtn = document.getElementById('closeAnimationBtn');
+        const adminLoginModal = document.getElementById('adminLoginModal');
+        const closeAdminLoginModal = document.getElementById('closeAdminLoginModal');
+        const adminLoginConfirmBtn = document.getElementById('adminLoginConfirmBtn');
+        const adminPasswordInput = document.getElementById('adminPassword');
+        const adjustTimesModal = document.getElementById('adjustTimesModal');
+        const closeAdjustModal = document.getElementById('closeAdjustModal');
+        const confirmAdjustBtn = document.getElementById('confirmAdjustBtn');
+
+        // 初始化：加载数据
+        function init() {
+            loadAllUsers();
+            loadSubmissions();
+            loadAdminLogs();
+            checkLoginStatus();
+
+            // 检查是否是管理员
+            if (localStorage.getItem(STORAGE_KEYS.IS_ADMIN) === 'true') {
+                showAdminPanel();
+            }
+        }
+
+        // 加载所有用户数据
+        function loadAllUsers() {
+            const usersData = localStorage.getItem(STORAGE_KEYS.USERS);
+            if (usersData) {
+                allUsers = JSON.parse(usersData);
+            } else {
+                allUsers = {};
+            }
+        }
+
+        // 保存所有用户数据
+        function saveAllUsers() {
+            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(allUsers));
+        }
+
+        // 加载提交记录
+        function loadSubmissions() {
+            const submissionsData = localStorage.getItem(STORAGE_KEYS.SUBMISSIONS);
+            if (submissionsData) {
+                pendingSubmissions = JSON.parse(submissionsData);
+            } else {
+                pendingSubmissions = [];
+            }
+        }
+
+        // 保存提交记录
+        function saveSubmissions() {
+            localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(pendingSubmissions));
+        }
+
+        // 加载管理员日志
+        function loadAdminLogs() {
+            const logsData = localStorage.getItem(STORAGE_KEYS.ADMIN_LOGS);
+            if (logsData) {
+                adminLogs = JSON.parse(logsData);
+            } else {
+                adminLogs = [];
+            }
+        }
+
+        // 保存管理员日志
+        function saveAdminLogs() {
+            localStorage.setItem(STORAGE_KEYS.ADMIN_LOGS, JSON.stringify(adminLogs));
+        }
+
+        // 添加管理员日志
+        function addAdminLog(action, details) {
+            const log = {
+                timestamp: new Date().toLocaleString('zh-CN'),
+                action: action,
+                details: details
+            };
+
+            adminLogs.unshift(log); // 添加到开头
+            if (adminLogs.length > 100) {
+                adminLogs = adminLogs.slice(0, 100); // 只保留最近100条
+            }
+
+            saveAdminLogs();
+
+            // 刷新日志显示
+            if (document.getElementById('logsTab').classList.contains('active')) {
+                loadAdminLogsDisplay();
+            }
+        }
+
+        // 检查登录状态
+        function checkLoginStatus() {
+            const currentUsername = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+            if (currentUsername && allUsers[currentUsername]) {
+                currentUser = allUsers[currentUsername];
+                showMainSection();
+                loadUserInfo();
+                loadTasks();
+                loadLotteryHistory();
+                checkLotteryTime();
+            }
+        }
+
+        // 登录
+        loginBtn.addEventListener('click', function() {
+            const username = usernameInput.value.trim();
+
+            if (!username) {
+                showAlert(loginAlert, '用户名不能为空', 'error');
+                return;
+            }
+
+            if (allUsers[username]) {
+                currentUser = allUsers[username];
+                localStorage.setItem(STORAGE_KEYS.CURRENT_USER, username);
+                showAlert(loginAlert, '登录成功！', 'success');
+                setTimeout(() => {
+                    showMainSection();
+                    loadUserInfo();
+                    loadTasks();
+                    loadLotteryHistory();
+                    checkLotteryTime();
+                }, 500);
+            } else {
+                showAlert(loginAlert, '用户不存在，请先注册', 'error');
+            }
+        });
+
+        // 注册
+        registerBtn.addEventListener('click', function() {
+            const username = usernameInput.value.trim();
+
+            if (!username) {
+                showAlert(loginAlert, '用户名不能为空', 'error');
+                return;
+            }
+
+            if (allUsers[username]) {
+                showAlert(loginAlert, '用户名已存在', 'error');
+                return;
+            }
+
+            // 创建新用户
+            const newUser = {
+                name: username,
+                lottery_times: 0,
+                total_lottery_drawn: 0,
+                total_reward: 0,
+                lottery_records: [],
+                tasks_completed: {},
+                daily_completions: {},
+                task_daily_counts: {},
+                admin_adjustments: [] // 记录管理员调整
+            };
+
+            // 初始化每日任务计数
+            TASKS.filter(task => task.is_daily).forEach(task => {
+                newUser.task_daily_counts[task.id] = 0;
+            });
+
+            allUsers[username] = newUser;
+            saveAllUsers();
+
+            currentUser = newUser;
+            localStorage.setItem(STORAGE_KEYS.CURRENT_USER, username);
+
+            showAlert(loginAlert, '注册成功！已自动登录', 'success');
+            setTimeout(() => {
+                showMainSection();
+                loadUserInfo();
+                loadTasks();
+                loadLotteryHistory();
+                checkLotteryTime();
+            }, 500);
+        });
+
+        // 退出登录
+        logoutBtn.addEventListener('click', function() {
+            localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+            currentUser = null;
+            showLoginSection();
+        });
+
+        // 管理员登录按钮
+        adminLoginBtn.addEventListener('click', function() {
+            adminLoginModal.style.display = 'flex';
+            adminPasswordInput.value = '';
+            adminPasswordInput.focus();
+        });
+
+        // 管理员登录
+        adminLoginConfirmBtn.addEventListener('click', function() {
+            const password = adminPasswordInput.value;
+
+            if (password === ADMIN_PASSWORD) {
+                localStorage.setItem(STORAGE_KEYS.IS_ADMIN, 'true');
+                adminLoginModal.style.display = 'none';
+                showAdminPanel();
+                addAdminLog('管理员登录', '管理员登录系统');
+            } else {
+                alert('密码错误！');
+            }
+        });
+
+        // 退出管理员
+        logoutAdminBtn.addEventListener('click', function() {
+            localStorage.removeItem(STORAGE_KEYS.IS_ADMIN);
+            adminPanel.style.display = 'none';
+            adminLoginBtn.style.display = 'block';
+            addAdminLog('管理员退出', '管理员退出系统');
+        });
+
+        // 显示登录界面
+        function showLoginSection() {
+            loginSection.style.display = 'block';
+            mainSection.style.display = 'none';
+            adminPanel.style.display = 'none';
+            adminLoginBtn.style.display = 'none';
+            usernameInput.value = '';
+        }
+
+        // 显示主界面
+        function showMainSection() {
+            loginSection.style.display = 'none';
+            mainSection.style.display = 'block';
+            adminPanel.style.display = 'none';
+            adminLoginBtn.style.display = 'block';
+        }
+
+        // 显示管理员面板
+        function showAdminPanel() {
+            mainSection.style.display = 'none';
+            adminPanel.style.display = 'block';
+            adminLoginBtn.style.display = 'none';
+            loadPendingSubmissions();
+            loadUserList();
+            loadAdminLogsDisplay();
+
+            // 默认显示第一个标签页
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.admin-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelector('.admin-tab').classList.add('active');
+            document.getElementById('submissionsTab').classList.add('active');
+        }
+
+        // 显示提示信息
+        function showAlert(alertElement, message, type) {
+            alertElement.textContent = message;
+            alertElement.className = `alert alert-${type}`;
+            alertElement.style.display = 'block';
+
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 3000);
+        }
+
+        // 获取当前日期字符串
+        function getCurrentDate() {
+            const now = new Date();
+            return now.toISOString().split('T')[0]; // YYYY-MM-DD格式
+        }
+
+        // 加载用户信息
+        function loadUserInfo() {
+            if (!currentUser) return;
+
+            document.getElementById('userName').textContent = currentUser.name;
+
+            // 计算已完成任务总数
+            let tasksCompleted = 0;
+
+            // 单一任务
+            tasksCompleted += Object.keys(currentUser.tasks_completed || {}).length;
+
+            // 每日任务（只计算今天完成的）
+            const today = getCurrentDate();
+            if (currentUser.daily_completions && currentUser.daily_completions[today]) {
+                tasksCompleted += currentUser.daily_completions[today].length;
+            }
+
+            document.getElementById('tasksCompleted').textContent = tasksCompleted;
+            document.getElementById('totalLotteryDrawn').textContent = currentUser.total_lottery_drawn || 0;
+            document.getElementById('totalReward').textContent = currentUser.total_reward || 0;
+            document.getElementById('lotteryTimes').textContent = currentUser.lottery_times || 0;
+
+            // 更新抽奖按钮状态
+            updateLotteryButtons();
+        }
+
+        // 加载任务列表
+        function loadTasks() {
+            if (!currentUser) return;
+
+            const tasksContainer = document.getElementById('tasksContainer');
+            tasksContainer.innerHTML = '';
+
+            const today = getCurrentDate();
+
+            TASKS.forEach(task => {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task-item';
+
+                // 检查任务是否可完成
+                let canComplete = false;
+                let statusText = '';
+                let buttonText = '完成任务';
+                let buttonDisabled = false;
+
+                if (task.is_daily) {
+                    // 每日任务
+                    const dailyCount = currentUser.task_daily_counts?.[task.id] || 0;
+                    const todayCompleted = currentUser.daily_completions?.[today]?.includes(task.id) || false;
+
+                    if (todayCompleted) {
+                        statusText = '<span style="color: #4CAF50; font-weight: 600;">今日已完成</span>';
+                        buttonText = '今日已完成';
+                        buttonDisabled = true;
+                    } else if (dailyCount >= task.max_daily_times) {
+                        statusText = '<span style="color: #ff9800;">已达到每日上限</span>';
+                        buttonText = '已达上限';
+                        buttonDisabled = true;
+                    } else {
+                        statusText = '<span style="color: #2196F3;">每日任务</span>';
+                        canComplete = true;
+                    }
+                } else {
+                    // 单一任务
+                    const isCompleted = currentUser.tasks_completed?.[task.id] || false;
+
+                    if (isCompleted) {
+                        statusText = '<span style="color: #4CAF50;">已完成</span>';
+                        buttonText = '已完成';
+                        buttonDisabled = true;
+                    } else {
+                        statusText = '<span style="color: #9C27B0;">单一任务</span>';
+                        canComplete = true;
+                    }
+                }
+
+                taskElement.innerHTML = `
+                    <div class="task-header">
+                        <div class="task-name">${task.name}</div>
+                        <div class="task-tag ${task.is_daily ? 'daily' : ''}">${task.is_daily ? '每日任务' : '单一任务'}</div>
+                    </div>
+                    <div class="task-description">${task.description}</div>
+                    <div class="task-footer">
+                        <div style="flex: 1;">
+                            <div>${statusText}</div>
+                            ${task.required_image ? `<div style="font-size: 0.8rem; color: #ff9800; margin-top: 5px;"><i class="fas fa-image"></i> ${task.image_description}</div>` : ''}
+                            ${task.required_fields ? `<div style="font-size: 0.8rem; color: #ff9800; margin-top: 5px;"><i class="fas fa-edit"></i> 需要填写：${task.required_fields.join('、')}</div>` : ''}
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="task-reward">奖励：${task.reward_times}次抽奖</div>
+                            <button class="task-complete-btn ${buttonDisabled ? 'disabled' : ''}"
+                                    data-task-id="${task.id}"
+                                    ${buttonDisabled ? 'disabled' : ''}>
+                                ${buttonText}
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                tasksContainer.appendChild(taskElement);
+            });
+
+            // 添加任务完成按钮事件监听
+            document.querySelectorAll('.task-complete-btn:not(.disabled)').forEach(button => {
+                button.addEventListener('click', function() {
+                    const taskId = parseInt(this.getAttribute('data-task-id'));
+                    showTaskCompleteModal(taskId);
+                });
+            });
+        }
+
+        // 显示任务完成确认模态框
+        function showTaskCompleteModal(taskId) {
+            currentTaskId = taskId;
+
+            const task = TASKS.find(t => t.id === taskId);
+            if (!task) return;
+
+            const taskCompleteContent = document.getElementById('taskCompleteContent');
+
+            let content = `
+                <h3 style="margin-bottom: 12px; font-size: 1.2rem;">${task.name}</h3>
+                <p style="margin-bottom: 12px; font-size: 0.9rem;">${task.description}</p>
+                <p style="color: #e52d27; font-weight: 700; margin-bottom: 15px;">完成可获得：${task.reward_times}次抽奖机会</p>
+            `;
+
+            if (task.required_image) {
+                content += `
+                    <div style="background: #f9f9f9; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                        <p><i class="fas fa-image"></i> <strong>上传图片：</strong></p>
+                        <p style="font-size: 0.85rem;">${task.image_description}</p>
+                        <input type="file" id="imageUpload" accept="image/*" style="margin-top: 10px; width: 100%; font-size: 0.9rem;">
+                        <div id="imagePreview" style="margin-top: 10px; display: none;">
+                            <img id="previewImage" src="" style="max-width: 100%; max-height: 150px; border-radius: 4px;">
+                            <p id="imageName" style="font-size: 0.8rem; color: #666; margin-top: 5px;"></p>
+                        </div>
+                        <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">上传图片后自动获得抽奖次数，管理员会审核图片</p>
+                    </div>
+                `;
+            }
+
+            if (task.required_fields) {
+                content += `
+                    <div style="background: #f9f9f9; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                        <p><i class="fas fa-edit"></i> <strong>必填项目：</strong></p>
+                        ${task.required_fields.map(field => `
+                            <div style="margin-top: 8px;">
+                                <label style="font-size: 0.85rem;">${field}：</label>
+                                <input type="text" class="form-control" id="field_${field}" style="margin-top: 5px; font-size: 0.9rem;">
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            taskCompleteContent.innerHTML = content;
+            taskCompleteModal.style.display = 'flex';
+
+            // 添加图片预览功能
+            const imageUpload = document.getElementById('imageUpload');
+            if (imageUpload) {
+                imageUpload.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const previewImage = document.getElementById('previewImage');
+                            const imagePreview = document.getElementById('imagePreview');
+                            const imageName = document.getElementById('imageName');
+
+                            previewImage.src = e.target.result;
+                            imageName.textContent = file.name;
+                            imagePreview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        }
+
+        // 确认完成任务
+        confirmTaskCompleteBtn.addEventListener('click', function() {
+            if (!currentUser || !currentTaskId) return;
+
+            const task = TASKS.find(t => t.id === currentTaskId);
+            if (!task) return;
+
+            const today = getCurrentDate();
+
+            // 检查是否可以完成
+            if (task.is_daily) {
+                // 检查今天是否已完成
+                if (currentUser.daily_completions && currentUser.daily_completions[today]) {
+                    if (currentUser.daily_completions[today].includes(currentTaskId)) {
+                        alert('今日已完成该任务');
+                        taskCompleteModal.style.display = 'none';
+                        return;
+                    }
+                }
+
+                // 检查是否达到每日上限
+                const dailyCount = currentUser.task_daily_counts?.[currentTaskId] || 0;
+                if (dailyCount >= task.max_daily_times) {
+                    alert('已达到每日完成上限');
+                    taskCompleteModal.style.display = 'none';
+                    return;
+                }
+
+                // 更新每日计数
+                if (!currentUser.task_daily_counts) currentUser.task_daily_counts = {};
+                currentUser.task_daily_counts[currentTaskId] = dailyCount + 1;
+
+                // 记录今日完成
+                if (!currentUser.daily_completions) currentUser.daily_completions = {};
+                if (!currentUser.daily_completions[today]) currentUser.daily_completions[today] = [];
+                currentUser.daily_completions[today].push(currentTaskId);
+
+            } else {
+                // 检查是否已完成
+                if (currentUser.tasks_completed && currentUser.tasks_completed[currentTaskId]) {
+                    alert('该任务已完成');
+                    taskCompleteModal.style.display = 'none';
+                    return;
+                }
+
+                // 记录任务完成
+                if (!currentUser.tasks_completed) currentUser.tasks_completed = {};
+                currentUser.tasks_completed[currentTaskId] = {
+                    completion_date: today
+                };
+            }
+
+            // 处理图片上传（如果需要）
+            if (task.required_image) {
+                const imageUpload = document.getElementById('imageUpload');
+                if (!imageUpload || !imageUpload.files[0]) {
+                    alert('请先上传图片！');
+                    return;
+                }
+
+                // 读取图片数据
+                const file = imageUpload.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    // 收集填写的内容
+                    const fields = {};
+                    if (task.required_fields) {
+                        task.required_fields.forEach(field => {
+                            const input = document.getElementById(`field_${field}`);
+                            if (input) {
+                                fields[field] = input.value.trim();
+                            }
+                        });
+                    }
+
+                    // 增加抽奖次数
+                    currentUser.lottery_times = (currentUser.lottery_times || 0) + task.reward_times;
+
+                    // 保存任务提交记录
+                    const submission = {
+                        id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                        username: currentUser.name,
+                        taskId: currentTaskId,
+                        taskName: task.name,
+                        reward_times: task.reward_times,
+                        imageData: e.target.result,
+                        imageName: file.name,
+                        timestamp: new Date().toLocaleString('zh-CN'),
+                        fields: Object.keys(fields).length > 0 ? fields : null,
+                        status: 'pending', // pending, approved, rejected
+                        admin_reviewed: false,
+                        admin_action: null,
+                        admin_comment: null,
+                        admin_timestamp: null
+                    };
+
+                    pendingSubmissions.push(submission);
+                    saveSubmissions();
+
+                    // 保存用户数据
+                    allUsers[currentUser.name] = currentUser;
+                    saveAllUsers();
+
+                    // 关闭模态框
+                    taskCompleteModal.style.display = 'none';
+
+                    alert(`任务完成！获得${task.reward_times}次抽奖机会！图片已保存，管理员会进行审核。`);
+
+                    // 刷新界面
+                    loadUserInfo();
+                    loadTasks();
+
+                    // 如果管理员已登录，刷新提交列表
+                    if (localStorage.getItem(STORAGE_KEYS.IS_ADMIN) === 'true') {
+                        loadPendingSubmissions();
+                    }
+                };
+
+                reader.readAsDataURL(file);
+                return;
+            }
+
+            // 对于不需要图片的任务，直接完成
+            // 增加抽奖次数
+            currentUser.lottery_times = (currentUser.lottery_times || 0) + task.reward_times;
+
+            // 保存数据
+            allUsers[currentUser.name] = currentUser;
+            saveAllUsers();
+
+            alert(`任务完成！获得${task.reward_times}次抽奖机会！`);
+            taskCompleteModal.style.display = 'none';
+
+            // 刷新界面
+            loadUserInfo();
+            loadTasks();
+        });
+
+        // 单次抽奖
+        singleDrawBtn.addEventListener('click', function() {
+            drawLottery(1);
+        });
+
+        // 五连抽
+        fiveDrawBtn.addEventListener('click', function() {
+            drawLottery(5);
+        });
+
+        // 抽奖函数
+        function drawLottery(times) {
+            if (!currentUser) return;
+
+            // 检查抽奖时间
+            if (!checkLotteryTime()) {
+                const startStr = LOTTERY_START_TIME.toLocaleString('zh-CN');
+                const endStr = LOTTERY_END_TIME.toLocaleString('zh-CN');
+                alert(`当前不在抽奖时间内！\n抽奖时间：${startStr} 至 ${endStr}`);
+                return;
+            }
+
+            // 检查抽奖次数
+            if (!currentUser.lottery_times || currentUser.lottery_times < times) {
+                alert(`抽奖次数不足！当前只有${currentUser.lottery_times || 0}次抽奖机会。`);
+                return;
+            }
+
+            // 扣减抽奖次数
+            currentUser.lottery_times -= times;
+            currentUser.total_lottery_drawn = (currentUser.total_lottery_drawn || 0) + times;
+
+            // 抽奖结果
+            const results = [];
+            let totalReward = 0;
+
+            for (let i = 0; i < times; i++) {
+                const result = singleLotteryDraw();
+                results.push(result);
+                totalReward += result.amount;
+
+                // 记录抽奖历史
+                if (!currentUser.lottery_records) currentUser.lottery_records = [];
+                currentUser.lottery_records.push({
+                    time: new Date().toLocaleString('zh-CN'),
+                    result: result.name,
+                    amount: result.amount
+                });
+            }
+
+            // 更新总奖励
+            currentUser.total_reward = (currentUser.total_reward || 0) + totalReward;
+
+            // 保存数据
+            allUsers[currentUser.name] = currentUser;
+            saveAllUsers();
+
+            // 显示动画
+            showLotteryAnimation(results, totalReward, times);
+        }
+
+        // 单次抽奖逻辑
+        function singleLotteryDraw() {
+            const randVal = Math.random() * 100;
+            let cumulativeProb = 0;
+
+            for (const item of LOTTERY_ITEMS) {
+                cumulativeProb += item.probability;
+                if (randVal <= cumulativeProb) {
+                    return item;
+                }
+            }
+
+            // 默认返回无奖励
+            return LOTTERY_ITEMS[LOTTERY_ITEMS.length - 1];
+        }
+
+        // 显示抽奖动画
+        function showLotteryAnimation(results, totalReward, times) {
+            // 显示动画界面
+            lotteryAnimation.style.display = 'flex';
+
+            // 显示抽奖结果
+            if (times === 1) {
+                // 单抽
+                const result = results[0];
+                animationResult.textContent = result.amount > 0 ? `${result.amount}元` : result.name;
+                animationMessage.textContent = result.amount > 0 ? '恭喜中奖！' : '很遗憾，下次好运！';
+            } else {
+                // 五连抽
+                animationResult.textContent = '五连抽';
+                let message = '';
+                results.forEach((result, index) => {
+                    message += `第${index + 1}次：${result.name}<br>`;
+                });
+                message += `<br>总计：${totalReward}元`;
+                animationMessage.innerHTML = message;
+            }
+
+            // 关闭动画
+            closeAnimationBtn.onclick = function() {
+                lotteryAnimation.style.display = 'none';
+
+                // 显示详细结果
+                showLotteryResults(results, totalReward, times);
+
+                // 刷新界面
+                loadUserInfo();
+                loadLotteryHistory();
+            };
+        }
+
+        // 显示抽奖结果
+        function showLotteryResults(results, totalReward, times) {
+            const lotteryResults = document.getElementById('lotteryResults');
+            const lotterySummary = document.getElementById('lotterySummary');
+
+            lotteryResults.innerHTML = '';
+
+            results.forEach((result, index) => {
+                const resultElement = document.createElement('div');
+                resultElement.className = 'lottery-result-item';
+                resultElement.innerHTML = `
+                    <div class="lottery-amount">${result.amount > 0 ? result.amount + '元' : ''}</div>
+                    <div class="lottery-name">${result.name}</div>
+                    <div style="font-size: 0.7rem; color: #999; margin-top: 3px;">第${index + 1}次</div>
+                `;
+                lotteryResults.appendChild(resultElement);
+            });
+
+            lotterySummary.innerHTML = `
+                <p>本次${times}连抽获得总奖励：<span style="color: #e52d27; font-size: 1.3rem;">${totalReward}</span> 元</p>
+            `;
+
+            lotteryResultsSection.style.display = 'block';
+
+            // 滚动到结果区域
+            setTimeout(() => {
+                lotteryResultsSection.scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+
+        // 加载抽奖历史
+        function loadLotteryHistory() {
+            if (!currentUser || !currentUser.lottery_records) return;
+
+            const lotteryHistory = document.getElementById('lotteryHistory');
+            lotteryHistory.innerHTML = '';
+
+            const records = currentUser.lottery_records;
+
+            if (records.length === 0) {
+                lotteryHistory.innerHTML = '<p style="text-align: center; color: #999;">暂无抽奖记录</p>';
+                return;
+            }
+
+            // 显示最近15条记录
+            const recentRecords = records.slice(-15).reverse();
+
+            recentRecords.forEach(record => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-time">${record.time}</div>
+                    <div class="history-result">${record.result}</div>
+                `;
+                lotteryHistory.appendChild(historyItem);
+            });
+        }
+
+        // 检查抽奖时间
+        function checkLotteryTime() {
+            const now = new Date();
+            const timeStatus = document.getElementById('lotteryTimeStatus');
+
+            if (now >= LOTTERY_START_TIME && now <= LOTTERY_END_TIME) {
+                timeStatus.innerHTML = '<span style="color: #4CAF50; font-weight: 600;"><i class="fas fa-check-circle"></i> 当前在抽奖时间内，可以抽奖！</span>';
+                updateLotteryButtons();
+                return true;
+            } else {
+                const startStr = LOTTERY_START_TIME.toLocaleString('zh-CN');
+                const endStr = LOTTERY_END_TIME.toLocaleString('zh-CN');
+                timeStatus.innerHTML = `<span style="color: #f44336; font-weight: 600;"><i class="fas fa-exclamation-circle"></i> 当前不在抽奖时间内，无法抽奖！</span><br><span style="font-size: 0.85rem;">抽奖时间：${startStr} 至 ${endStr}</span>`;
+
+                // 禁用抽奖按钮
+                singleDrawBtn.classList.add('btn-disabled');
+                singleDrawBtn.disabled = true;
+                fiveDrawBtn.classList.add('btn-disabled');
+                fiveDrawBtn.disabled = true;
+                return false;
+            }
+        }
+
+        // 更新抽奖按钮状态
+        function updateLotteryButtons() {
+            if (!currentUser) return;
+
+            const lotteryTimes = currentUser.lottery_times || 0;
+
+            // 单抽按钮
+            if (lotteryTimes >= 1) {
+                singleDrawBtn.classList.remove('btn-disabled');
+                singleDrawBtn.disabled = false;
+            } else {
+                singleDrawBtn.classList.add('btn-disabled');
+                singleDrawBtn.disabled = true;
+            }
+
+            // 五连抽按钮
+            if (lotteryTimes >= 5) {
+                fiveDrawBtn.classList.remove('btn-disabled');
+                fiveDrawBtn.disabled = false;
+            } else {
+                fiveDrawBtn.classList.add('btn-disabled');
+                fiveDrawBtn.disabled = true;
+            }
+        }
+
+        // 关闭任务完成模态框
+        closeTaskModal.addEventListener('click', function() {
+            taskCompleteModal.style.display = 'none';
+        });
+
+        // 关闭管理员登录模态框
+        closeAdminLoginModal.addEventListener('click', function() {
+            adminLoginModal.style.display = 'none';
+        });
+
+        // 关闭调整次数模态框
+        closeAdjustModal.addEventListener('click', function() {
+            adjustTimesModal.style.display = 'none';
+        });
+
+        // 点击模态框外部关闭
+        window.addEventListener('click', function(event) {
+            if (event.target === taskCompleteModal) {
+                taskCompleteModal.style.display = 'none';
+            }
+            if (event.target === lotteryAnimation) {
+                lotteryAnimation.style.display = 'none';
+            }
+            if (event.target === adminLoginModal) {
+                adminLoginModal.style.display = 'none';
+            }
+            if (event.target === adjustTimesModal) {
+                adjustTimesModal.style.display = 'none';
+            }
+        });
+
+        // 管理员标签页切换
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+
+                // 更新标签页状态
+                document.querySelectorAll('.admin-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                // 更新内容显示
+                document.querySelectorAll('.admin-tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId + 'Tab').classList.add('active');
+
+                // 加载对应内容
+                if (tabId === 'submissions') {
+                    loadPendingSubmissions();
+                } else if (tabId === 'users') {
+                    loadUserList();
+                } else if (tabId === 'logs') {
+                    loadAdminLogsDisplay();
+                }
+            });
+        });
+
+        // 加载待审核的提交
+        function loadPendingSubmissions() {
+            const pendingSubmissionsDiv = document.getElementById('pendingSubmissions');
+            pendingSubmissionsDiv.innerHTML = '';
+
+            if (pendingSubmissions.length === 0) {
+                pendingSubmissionsDiv.innerHTML = '<p style="text-align: center; color: #999;">暂无待审核的提交</p>';
+                return;
+            }
+
+            // 只显示待审核的提交
+            const pendingItems = pendingSubmissions.filter(sub => sub.status === 'pending');
+
+            if (pendingItems.length === 0) {
+                pendingSubmissionsDiv.innerHTML = '<p style="text-align: center; color: #999;">暂无待审核的提交</p>';
+                return;
+            }
+
+            pendingItems.forEach(submission => {
+                const submissionItem = document.createElement('div');
+                submissionItem.className = 'submission-item';
+                submissionItem.innerHTML = `
+                    <div class="submission-header">
+                        <div style="font-weight: 700; font-size: 1rem;">${submission.taskName}</div>
+                        <div style="font-size: 0.8rem; color: #666;">用户: ${submission.username}</div>
+                    </div>
+                    <div class="submission-info">
+                        <p><strong>提交时间：</strong>${submission.timestamp}</p>
+                        <p><strong>奖励次数：</strong>${submission.reward_times}次</p>
+                        ${submission.fields ? Object.entries(submission.fields).map(([key, value]) =>
+                            `<p><strong>${key}：</strong>${value}</p>`
+                        ).join('') : ''}
+                    </div>
+                    <div class="submission-image">
+                        <img src="${submission.imageData}" alt="${submission.imageName}">
+                        <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">${submission.imageName}</p>
+                    </div>
+                    <div class="submission-actions">
+                        <button class="approve-btn" onclick="approveSubmission('${submission.id}')">
+                            <i class="fas fa-check"></i> 通过
+                        </button>
+                        <button class="reject-btn" onclick="rejectSubmission('${submission.id}')">
+                            <i class="fas fa-times"></i> 拒绝
+                        </button>
+                        <button class="adjust-btn" onclick="showAdjustModal('${submission.username}')">
+                            <i class="fas fa-edit"></i> 调整次数
+                        </button>
+                    </div>
+                `;
+                pendingSubmissionsDiv.appendChild(submissionItem);
+            });
+        }
+
+        // 审核通过提交
+        function approveSubmission(submissionId) {
+            const submission = pendingSubmissions.find(sub => sub.id === submissionId);
+            if (!submission) return;
+
+            submission.status = 'approved';
+            submission.admin_reviewed = true;
+            submission.admin_action = 'approved';
+            submission.admin_comment = '审核通过';
+            submission.admin_timestamp = new Date().toLocaleString('zh-CN');
+
+            saveSubmissions();
+            loadPendingSubmissions();
+
+            addAdminLog('审核通过', `任务提交ID: ${submissionId.substr(0, 8)}, 用户: ${submission.username}, 任务: ${submission.taskName}`);
+
+            alert(`已通过用户 ${submission.username} 的任务提交`);
+        }
+
+        // 审核拒绝提交
+        function rejectSubmission(submissionId) {
+            const submission = pendingSubmissions.find(sub => sub.id === submissionId);
+            if (!submission) return;
+
+            // 询问拒绝原因
+            const reason = prompt('请输入拒绝原因：', '图片不符合要求');
+            if (reason === null) return;
+
+            // 扣除用户已获得的抽奖次数
+            const user = allUsers[submission.username];
+            if (user) {
+                user.lottery_times = Math.max(0, (user.lottery_times || 0) - submission.reward_times);
+
+                // 记录管理员调整
+                if (!user.admin_adjustments) user.admin_adjustments = [];
+                user.admin_adjustments.push({
+                    timestamp: new Date().toLocaleString('zh-CN'),
+                    type: 'deduction',
+                    amount: submission.reward_times,
+                    reason: `任务提交被拒绝: ${reason}`,
+                    submission_id: submissionId
+                });
+
+                saveAllUsers();
+            }
+
+            submission.status = 'rejected';
+            submission.admin_reviewed = true;
+            submission.admin_action = 'rejected';
+            submission.admin_comment = reason;
+            submission.admin_timestamp = new Date().toLocaleString('zh-CN');
+
+            saveSubmissions();
+            loadPendingSubmissions();
+
+            addAdminLog('审核拒绝', `任务提交ID: ${submissionId.substr(0, 8)}, 用户: ${submission.username}, 任务: ${submission.taskName}, 原因: ${reason}`);
+
+            alert(`已拒绝用户 ${submission.username} 的任务提交，并扣除${submission.reward_times}次抽奖机会`);
+        }
+
+        // 显示调整抽奖次数模态框
+        function showAdjustModal(username) {
+            adjustUsername = username;
+            const user = allUsers[username];
+
+            const adjustContent = document.getElementById('adjustContent');
+            adjustContent.innerHTML = `
+                <h3 style="margin-bottom: 12px; font-size: 1.1rem;">调整用户抽奖次数</h3>
+                <p><strong>用户名：</strong>${username}</p>
+                <p><strong>当前抽奖次数：</strong>${user.lottery_times || 0}</p>
+                <div style="margin-top: 15px;">
+                    <label style="font-size: 0.9rem;">调整类型：</label>
+                    <select id="adjustType" class="form-control" style="margin-top: 5px; font-size: 0.9rem;">
+                        <option value="add">增加次数</option>
+                        <option value="deduct">减少次数</option>
+                        <option value="set">设置为</option>
+                    </select>
+                </div>
+                <div style="margin-top: 12px;">
+                    <label style="font-size: 0.9rem;">调整数量：</label>
+                    <input type="number" id="adjustAmount" class="form-control" style="margin-top: 5px; font-size: 0.9rem;" min="1" value="1">
+                </div>
+                <div style="margin-top: 12px;">
+                    <label style="font-size: 0.9rem;">调整原因：</label>
+                    <input type="text" id="adjustReason" class="form-control" style="margin-top: 5px; font-size: 0.9rem;" placeholder="请输入调整原因">
+                </div>
+            `;
+
+            adjustTimesModal.style.display = 'flex';
+        }
+
+        // 确认调整抽奖次数
+        confirmAdjustBtn.addEventListener('click', function() {
+            if (!adjustUsername) return;
+
+            const user = allUsers[adjustUsername];
+            if (!user) {
+                alert('用户不存在');
+                return;
+            }
+
+            const adjustType = document.getElementById('adjustType').value;
+            const adjustAmount = parseInt(document.getElementById('adjustAmount').value);
+            const adjustReason = document.getElementById('adjustReason').value.trim();
+
+            if (!adjustAmount || adjustAmount <= 0) {
+                alert('请输入有效的调整数量');
+                return;
+            }
+
+            if (!adjustReason) {
+                alert('请输入调整原因');
+                return;
+            }
+
+            let newLotteryTimes = user.lottery_times || 0;
+            let adjustmentType = '';
+
+            if (adjustType === 'add') {
+                newLotteryTimes += adjustAmount;
+                adjustmentType = '增加';
+            } else if (adjustType === 'deduct') {
+                newLotteryTimes = Math.max(0, newLotteryTimes - adjustAmount);
+                adjustmentType = '减少';
+            } else if (adjustType === 'set') {
+                newLotteryTimes = Math.max(0, adjustAmount);
+                adjustmentType = '设置为';
+            }
+
+            user.lottery_times = newLotteryTimes;
+
+            // 记录管理员调整
+            if (!user.admin_adjustments) user.admin_adjustments = [];
+            user.admin_adjustments.push({
+                timestamp: new Date().toLocaleString('zh-CN'),
+                type: adjustType,
+                amount: adjustAmount,
+                reason: adjustReason,
+                old_times: user.lottery_times - (adjustType === 'add' ? adjustAmount : adjustType === 'deduct' ? -adjustAmount : 0)
+            });
+
+            saveAllUsers();
+
+            // 刷新用户列表
+            loadUserList();
+
+            // 如果被调整的用户是当前登录用户，刷新用户信息
+            if (currentUser && currentUser.name === adjustUsername) {
+                loadUserInfo();
+            }
+
+            adjustTimesModal.style.display = 'none';
+
+            addAdminLog('调整抽奖次数', `用户: ${adjustUsername}, 操作: ${adjustmentType}${adjustAmount}次, 原因: ${adjustReason}`);
+
+            alert(`已${adjustmentType}用户 ${adjustUsername} ${adjustAmount}次抽奖机会，当前次数：${newLotteryTimes}`);
+        });
+
+        // 加载用户列表
+        function loadUserList() {
+            const userListDiv = document.getElementById('userList');
+            userListDiv.innerHTML = '';
+
+            const searchTerm = document.getElementById('searchUser')?.value?.toLowerCase() || '';
+
+            const filteredUsers = Object.entries(allUsers)
+                .filter(([username, user]) =>
+                    username.toLowerCase().includes(searchTerm) ||
+                    user.name.toLowerCase().includes(searchTerm)
+                );
+
+            if (filteredUsers.length === 0) {
+                userListDiv.innerHTML = '<p style="text-align: center; color: #999;">暂无用户</p>';
+                return;
+            }
+
+            filteredUsers.forEach(([username, user]) => {
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item';
+                userItem.innerHTML = `
+                    <div class="user-info-admin">
+                        <div style="font-weight: 700; font-size: 1rem;">${user.name}</div>
+                        <div style="font-size: 0.8rem; color: #666;">
+                            抽奖次数: ${user.lottery_times || 0} |
+                            累计奖励: ${user.total_reward || 0}元
+                        </div>
+                    </div>
+                    <div class="user-controls">
+                        <input type="number" id="adjust_${username}" placeholder="次数" min="1" value="1" style="font-size: 0.9rem;">
+                        <button onclick="quickAdjustUser('${username}')" style="font-size: 0.9rem;">调整</button>
+                    </div>
+                `;
+                userListDiv.appendChild(userItem);
+            });
+        }
+
+        // 快速调整用户抽奖次数
+        function quickAdjustUser(username) {
+            const user = allUsers[username];
+            if (!user) return;
+
+            const amountInput = document.getElementById(`adjust_${username}`);
+            const amount = parseInt(amountInput.value);
+
+            if (!amount || amount <= 0) {
+                alert('请输入有效的调整数量');
+                return;
+            }
+
+            const reason = prompt(`请输入调整用户 ${username} 抽奖次数的原因：`, '管理员手动调整');
+            if (reason === null) return;
+
+            const action = confirm(`请选择操作：\n\n确定 - 增加 ${amount} 次\n取消 - 减少 ${amount} 次`);
+
+            let newLotteryTimes = user.lottery_times || 0;
+            let adjustmentType = '';
+
+            if (action) {
+                newLotteryTimes += amount;
+                adjustmentType = '增加';
+            } else {
+                newLotteryTimes = Math.max(0, newLotteryTimes - amount);
+                adjustmentType = '减少';
+            }
+
+            user.lottery_times = newLotteryTimes;
+
+            // 记录管理员调整
+            if (!user.admin_adjustments) user.admin_adjustments = [];
+            user.admin_adjustments.push({
+                timestamp: new Date().toLocaleString('zh-CN'),
+                type: adjustmentType,
+                amount: amount,
+                reason: reason
+            });
+
+            saveAllUsers();
+
+            // 刷新用户列表
+            loadUserList();
+
+            // 如果被调整的用户是当前登录用户，刷新用户信息
+            if (currentUser && currentUser.name === username) {
+                loadUserInfo();
+            }
+
+            addAdminLog('快速调整抽奖次数', `用户: ${username}, 操作: ${adjustmentType}${amount}次, 原因: ${reason}`);
+
+            alert(`已${adjustmentType}用户 ${username} ${amount}次抽奖机会，当前次数：${newLotteryTimes}`);
+        }
+
+        // 加载管理员日志显示
+        function loadAdminLogsDisplay() {
+            const adminLogsDiv = document.getElementById('adminLogs');
+            adminLogsDiv.innerHTML = '';
+
+            if (adminLogs.length === 0) {
+                adminLogsDiv.innerHTML = '<p style="text-align: center; color: #999;">暂无操作日志</p>';
+                return;
+            }
+
+            // 只显示最近30条日志
+            const recentLogs = adminLogs.slice(0, 30);
+
+            recentLogs.forEach(log => {
+                const logItem = document.createElement('div');
+                logItem.className = 'history-item';
+                logItem.innerHTML = `
+                    <div class="history-time">${log.timestamp}</div>
+                    <div>
+                        <div class="history-result">${log.action}</div>
+                        <div style="font-size: 0.75rem; color: #666;">${log.details}</div>
+                    </div>
+                `;
+                adminLogsDiv.appendChild(logItem);
+            });
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+
+            // 每30秒检查一次抽奖时间
+            setInterval(checkLotteryTime, 30000);
+
+            // 每天凌晨1点重置每日任务
+            setInterval(function() {
+                const now = new Date();
+                if (now.getHours() === 1 && now.getMinutes() === 0) {
+                    // 重置每日任务计数
+                    if (currentUser && currentUser.task_daily_counts) {
+                        TASKS.filter(task => task.is_daily).forEach(task => {
+                            currentUser.task_daily_counts[task.id] = 0;
+                        });
+
+                        // 保存数据
+                        allUsers[currentUser.name] = currentUser;
+                        saveAllUsers();
+
+                        // 刷新任务列表
+                        loadTasks();
+                    }
+                }
+            }, 60000); // 每分钟检查一次
+
+            // 用户搜索功能
+            const searchUserInput = document.getElementById('searchUser');
+            if (searchUserInput) {
+                searchUserInput.addEventListener('input', function() {
+                    loadUserList();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
